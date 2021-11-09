@@ -151,6 +151,9 @@ const diff = (prevText, nextText) => {
   return processMultipleChangeset(changeset, prevText, nextText);
 };
 
+const patch = (prevText, { start, end, text }) => prevText.slice(0, start) + text + prevText.slice(end, prevText.length);
+
 module.exports = {
   diff,
+  patch,
 };

@@ -1,4 +1,7 @@
-const { diff } = require('./index');
+const {
+  diff,
+  patch,
+} = require('./index');
 
 test('unchanged text', () => {
   expect(diff('', '')).toBe(null);
@@ -306,4 +309,268 @@ test('multiple changeset full text replacement', () => {
     end: 6,
     text: 'zabczdy',
   });
+});
+
+test('prefix addition', () => {
+  expect(patch('abc', {
+    start: 0,
+    end: 0,
+    text: '',
+  })).toBe('abc');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 0,
+    text: 'c',
+  })).toBe('cabc');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 0,
+    text: 'abc',
+  })).toBe('abcabc');
+
+  expect(patch('', {
+    start: 0,
+    end: 0,
+    text: '',
+  })).toBe('');
+
+  expect(patch('', {
+    start: 0,
+    end: 0,
+    text: 'a',
+  })).toBe('a');
+
+  expect(patch('', {
+    start: 0,
+    end: 0,
+    text: 'abc',
+  })).toBe('abc');
+});
+
+test('prefix replacement', () => {
+  expect(patch('abc', {
+    start: 0,
+    end: 1,
+    text: 'c',
+  })).toBe('cbc');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 2,
+    text: 'cc',
+  })).toBe('ccc');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 3,
+    text: 'ccc',
+  })).toBe('ccc');
+
+  expect(patch('a', {
+    start: 0,
+    end: 1,
+    text: 'c',
+  })).toBe('c');
+
+  expect(patch('ab', {
+    start: 0,
+    end: 2,
+    text: 'cc',
+  })).toBe('cc');
+
+  expect(patch('ab', {
+    start: 0,
+    end: 2,
+    text: 'ccc',
+  })).toBe('ccc');
+});
+
+test('prefix removal', () => {
+  expect(patch('abc', {
+    start: 0,
+    end: 0,
+    text: '',
+  })).toBe('abc');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 1,
+    text: '',
+  })).toBe('bc');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 2,
+    text: '',
+  })).toBe('c');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 3,
+    text: '',
+  })).toBe('');
+});
+
+test('suffix addition', () => {
+  expect(patch('abc', {
+    start: 3,
+    end: 3,
+    text: '',
+  })).toBe('abc');
+
+  expect(patch('abc', {
+    start: 3,
+    end: 3,
+    text: 'a',
+  })).toBe('abca');
+
+  expect(patch('abc', {
+    start: 3,
+    end: 3,
+    text: 'abc',
+  })).toBe('abcabc');
+
+  expect(patch('', {
+    start: 0,
+    end: 0,
+    text: '',
+  })).toBe('');
+
+  expect(patch('', {
+    start: 0,
+    end: 0,
+    text: 'a',
+  })).toBe('a');
+
+  expect(patch('', {
+    start: 0,
+    end: 0,
+    text: 'abc',
+  })).toBe('abc');
+});
+
+test('suffix replacement', () => {
+  expect(patch('abc', {
+    start: 2,
+    end: 3,
+    text: 'a',
+  })).toBe('aba');
+
+  expect(patch('abc', {
+    start: 1,
+    end: 3,
+    text: 'aa',
+  })).toBe('aaa');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 3,
+    text: 'aaa',
+  })).toBe('aaa');
+
+  expect(patch('a', {
+    start: 0,
+    end: 1,
+    text: 'c',
+  })).toBe('c');
+
+  expect(patch('ab', {
+    start: 0,
+    end: 2,
+    text: 'cc',
+  })).toBe('cc');
+
+  expect(patch('ab', {
+    start: 0,
+    end: 2,
+    text: 'ccc',
+  })).toBe('ccc');
+});
+
+test('suffix removal', () => {
+  expect(patch('abc', {
+    start: 3,
+    end: 3,
+    text: '',
+  })).toBe('abc');
+
+  expect(patch('abc', {
+    start: 2,
+    end: 3,
+    text: '',
+  })).toBe('ab');
+
+  expect(patch('abc', {
+    start: 1,
+    end: 3,
+    text: '',
+  })).toBe('a');
+
+  expect(patch('abc', {
+    start: 0,
+    end: 3,
+    text: '',
+  })).toBe('');
+});
+
+test('root addition', () => {
+  expect(patch('abc', {
+    start: 1,
+    end: 1,
+    text: '',
+  })).toBe('abc');
+
+  expect(patch('abc', {
+    start: 1,
+    end: 1,
+    text: 'c',
+  })).toBe('acbc');
+
+  expect(patch('abc', {
+    start: 1,
+    end: 1,
+    text: 'cc',
+  })).toBe('accbc');
+});
+
+test('root replacement', () => {
+  expect(patch('abc', {
+    start: 1,
+    end: 2,
+    text: 'd',
+  })).toBe('adc');
+
+  expect(patch('abcd', {
+    start: 1,
+    end: 3,
+    text: 'ee',
+  })).toBe('aeed');
+
+  expect(patch('abcde', {
+    start: 1,
+    end: 4,
+    text: 'fff',
+  })).toBe('afffe');
+});
+
+test('root removal', () => {
+  expect(patch('abc', {
+    start: 1,
+    end: 2,
+    text: '',
+  })).toBe('ac');
+
+  expect(patch('abcd', {
+    start: 1,
+    end: 3,
+    text: '',
+  })).toBe('ad');
+
+  expect(patch('abcde', {
+    start: 1,
+    end: 4,
+    text: '',
+  })).toBe('ae');
 });
